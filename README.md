@@ -26,6 +26,7 @@ When prompted for the colors, enter the color that each tile got in your guess.
 
 
 For example, if you guess:
+
 ![guess](./data/example_guess.jpg)
 
 You would enter the following into your wordler:
