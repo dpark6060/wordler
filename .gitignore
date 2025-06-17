@@ -1,4 +1,6 @@
+*
 !Game.py
+!src/
 !src/*.py
 !data/*.txt
 !data/example_guess.jpg

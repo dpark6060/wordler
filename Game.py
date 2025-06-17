@@ -1,22 +1,22 @@
 import copy
 
-from src import Utils, LetterStats, Rules, WordGuess
+from src import Utils, Stats, Rules, WordGuess, Suggestor
 
 import logging
 
-logging.basicConfig(level="DEBUG")
+logging.basicConfig(level="INFO")
 log = logging.getLogger()
-WOI = "pudgy"
-debug_WOI = False
+WOI = "pious"
+debug_WOI = True
 
 class Game:
-    def __init__(self, practice: bool =False, remove_previous_wordles: bool = False, remove_plural: bool = False, remove_past_tense:bool = False):
+    def __init__(self, practice: bool = False, remove_previous_wordles: bool = False, remove_plural: bool = False, remove_past_tense: bool = False):
         """ The main game object
 
         Args:
             practice: if True, won't ask you to add the correct word to the correct wordle list
             remove_previous_wordles: if True, do not consider previous wordle words for solutions
-            remove_plural: if True, remove all words ending in "s", excluding "ss" words
+            remove_plural: if True, remove all wornds ending in "s", excluding "ss" words
             remove_past_tense: if True, remove all words ending in "ed"
         """
 
@@ -27,7 +27,11 @@ class Game:
 
         self.rule_maker = WordGuess.GuessRules()
         self.word_list = self.init_wordlist()
-        self.stat_calc = LetterStats.LetterStats(self.word_list)
+        self.full_word_list = copy.deepcopy(self.word_list)
+        self.stat_calc = Stats.LetterStats.init_and_calc(self.word_list)
+        self.word_stat_calc = Stats.WordStats(self.stat_calc.letter_prob, self.stat_calc.bigram_prob)
+        self.suggestor = Suggestor.Suggestor()
+        self.unknown_letters = [a for a in "abcdefghijklmnopqrstuvwxyz"]
 
         self._play = True
 
@@ -64,9 +68,16 @@ class Game:
         """
         log.debug('making rules')
         rules = self.rule_maker.guess_to_rules(guess)
+        self.update_letters(guess)
         log.debug('done')
+        self._check_woi()
         self.word_list = Rules.evaluate_rules_in_list(self.word_list, rules)
         self._check_woi()
+
+    def update_letters(self, guess: WordGuess):
+        for letter in guess.letters:
+            if letter in self.unknown_letters:
+                self.unknown_letters.remove(letter)
 
     def is_game_won(self):
         """ Checks to see if we've won the game.
@@ -144,9 +155,9 @@ class Game:
 
         """
         log.debug("Calculating stats")
-        word_stats = [self.stat_calc.get_word_stats(word) for word in self.word_list]
+        guess_words, guess_vals = self.suggestor.suggest(self.word_list, self.unknown_letters)
         log.debug('done')
-        Utils.display_choices(self.word_list, word_stats)
+        Utils.display_choices(guess_words, guess_vals)
 
     def play(self) -> None:
         """ Executes the game
@@ -167,5 +178,8 @@ class Game:
                 self.lose_state()
 
 
-game = Game(remove_previous_wordles=False, practice=True)
-game.play()
+
+
+if __name__ == "__main__":
+    game = Game(remove_previous_wordles=True,remove_plural=True)
+    game.play()
