@@ -54,6 +54,12 @@ def get_word_list(remove_previous_wordles=False, remove_plural=False, remove_pas
 
     wordles = copy.deepcopy(get_wordles())
     words = copy.deepcopy(get_words())
+    # Wordle words are only ever true five letter words.
+    # They are never plurals of four letter words,
+    # Nor any modified version of shorter words, e.g.
+    # time -> timed would never be used as it's the past tense of a four letter word.
+    # These rules are based on observation and may not strictly apply to every game.
+
     if remove_plural:
         plural_wordles = [w for w in wordles if w.endswith('s')]
         plural_words = [w for w in words if w.endswith('s')]
