@@ -50,7 +50,7 @@ def add_wordle(new_word):
         f.write("\n" + new_word)
 
 
-def get_word_list(remove_previous_wordles=False, remove_plural=False, remove_past_tense=False):
+def get_word_list(remove_previous_wordles=False, remove_plural=False, remove_past_tense=False, remove_un=False):
 
     wordles = copy.deepcopy(get_wordles())
     words = copy.deepcopy(get_words())
@@ -77,6 +77,11 @@ def get_word_list(remove_previous_wordles=False, remove_plural=False, remove_pas
 
     if remove_previous_wordles:
         words = [w for w in words if w not in wordles]
+    
+    if remove_un:
+        words = [w for w in words if not w.startswith("un")]
+
+    
 
     return words
 

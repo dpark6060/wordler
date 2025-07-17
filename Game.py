@@ -10,7 +10,7 @@ WOI = "pious"
 debug_WOI = True
 
 class Game:
-    def __init__(self, practice: bool = False, remove_previous_wordles: bool = False, remove_plural: bool = False, remove_past_tense: bool = False):
+    def __init__(self, practice: bool = False, remove_previous_wordles: bool = False, remove_plural: bool = False, remove_past_tense: bool = False, remove_un: bool = False):
         """ The main game object
 
         Args:
@@ -23,6 +23,7 @@ class Game:
         self.remove_previous_wordles = remove_previous_wordles
         self.remove_plural = remove_plural
         self.remove_past_tense = remove_past_tense
+        self.remove_un = remove_un
         self.practice = practice
 
         self.rule_maker = WordGuess.GuessRules()
@@ -45,7 +46,7 @@ class Game:
     def init_wordlist(self) -> list[str]:
         """ Initialize the word list
         """
-        my_word_list = copy.deepcopy(Utils.get_word_list(remove_previous_wordles=self.remove_previous_wordles, remove_plural=self.remove_plural, remove_past_tense=self.remove_past_tense))
+        my_word_list = copy.deepcopy(Utils.get_word_list(remove_previous_wordles=self.remove_previous_wordles, remove_plural=self.remove_plural, remove_past_tense=self.remove_past_tense, remove_un=self.remove_un))
         return my_word_list
 
     def get_guess(self) -> WordGuess.WordGuess:
@@ -181,5 +182,5 @@ class Game:
 
 
 if __name__ == "__main__":
-    game = Game(remove_previous_wordles=True,remove_plural=True)
+    game = Game(remove_previous_wordles=True,remove_plural=True, remove_un=True)
     game.play()

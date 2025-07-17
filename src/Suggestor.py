@@ -5,6 +5,7 @@ from src import Stats
 class Suggestor:
     def __init__(self):
         self.stats = Stats.LetterStats()
+        #self.wstats = Stats.WordStats()
 
     def suggest(self, current_possible_words, unknown_letters):
         letter_stats = self.stats.calc_in_word_stats(current_possible_words)
@@ -32,5 +33,12 @@ class Suggestor:
 
     def process_word(self, word, letter_stats):
         #sorted_letters = self.sort_letters_by_prob(word)
+        # repeated words have a reduction in probability 
         multiplier = [1/(1.5**word.count(l)) for l in word]
         return sum([letter_stats[word[i]] * multiplier[i] for i in range(len(word))])
+
+    def process_word_strat1(self, word, letter_stats):
+        # Straight addition of word frequency
+        # generally bad, words like "whooo" come up a lot just because
+        # of vowel frequency.
+        return sum([letter_stats[word[i]] for i in range(len(word))])
